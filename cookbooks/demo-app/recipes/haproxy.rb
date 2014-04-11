@@ -23,9 +23,6 @@ package "haproxy"
 
 pool_members = search("node", "role:#{node['haproxy']['app_server_role']} AND chef_environment:#{node.chef_environment}") || []
 
-require 'pry'
-binding.pry
-
 template "/etc/haproxy/haproxy.cfg" do
   source "haproxy.cfg.erb"
   owner "root"
