@@ -1,0 +1,11 @@
+berksfile:
+    options: '--no-freeze --halt-on-frozen'
+
+roles:
+- base:
+- webapp:
+
+data bags:
+- users:
+    items:
+    - mray
