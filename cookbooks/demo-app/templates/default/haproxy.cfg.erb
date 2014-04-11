@@ -31,7 +31,11 @@ defaults
   maxconn                 3000
 
 
-listen webfarm 0.0.0.0:80
+frontend http
+  default_backend servers-http
+  bind 0.0.0.0:<%= node['haproxy']['member_port'] %>
+
+backend servers-http
   mode http
   stats uri /haproxy
   balance roundrobin
