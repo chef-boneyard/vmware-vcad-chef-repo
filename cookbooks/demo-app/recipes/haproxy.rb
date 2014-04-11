@@ -17,6 +17,27 @@
 # limitations under the License.
 #
 
-package "redhat-lsb"
-
 node.override['haproxy']['admin']['address_bind'] = node['cloud']['public_ipv4']
+
+package "haproxy"
+
+pool_members = search("node", "role:#{node['haproxy']['app_server_role']} AND chef_environment:#{node.chef_environment}") || []
+
+require 'pry'
+binding.pry
+
+template "/etc/haproxy/haproxy.cfg" do
+  source "haproxy.cfg.erb"
+  owner "root"
+  group "root"
+  mode 00644
+  variables(
+    :pool_members => pool_members.uniq
+    )
+  notifies :reload, "service[haproxy]"
+end
+
+service "haproxy" do
+  supports :restart => true, :status => true, :reload => true
+  action [:enable, :start]
+end
