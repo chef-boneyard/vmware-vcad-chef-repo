@@ -1,0 +1,12 @@
+Overview
+VMware's vCloud Application Director provides a variety of ways to integrate with your Chef-managed infrastructure. For this example application we decided to deploy a 3-tier webapp demonstration demonstrating Chef's configuration management capabilities.
+
+Note:This is a trivial demonstration application not intended for production use.
+
+
+Components
+This solution provisions and configures one database server, two application servers and a software load balancer server. The database server runs MySQL. The application server(s) run a combination of apache as a front-end webserver and gunicorn as the Django application server. The software load balancer runs HAProxy. All servers run CentOS 6.x.
+
+
+Configuration Strategy
+The Chef-managed Service bootstraps the servers with Chef using the user's server and credentials. The Application provides additional configuration attributes exposed as Properties and written to the appd.json. The cookbooks and roles are provided by the demo Chef repository, which uses the community Apache and MySQL cookbooks and recipes for HAProxy and Django. During Deployment the chef-client deploys the infrastructure and dynamically configures the database connections for the application servers and finds the application servers for the load balancer configuration. If additional application servers are deployed, running the UPDATE Action on the HAProxy server will add the new nodes to the load balancer pool.
