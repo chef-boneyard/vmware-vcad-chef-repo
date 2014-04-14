@@ -6,9 +6,6 @@
    "importFileName":"chef-3-tier-v1-0-0.xml",
    "appdVersions":[
       {
-         "appdVersion":"v5.2"
-      },
-      {
          "appdVersion":"v6.0"
       }
    ]
