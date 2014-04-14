@@ -31,7 +31,9 @@ end
   end
 end
 
-db = search(:node, 'run_list:recipe\[mysql\:\:server\]') || []
+db = search(:node, 'run_list:database') || []
+
+# mysql -u root -pilikerandompasswords -P 3309 -h 172.31.6.23 show databases;
 
 #write out the webpage
 template '/var/www/demo-app/index.html' do

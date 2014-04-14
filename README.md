@@ -8,7 +8,7 @@ Chef Repository
 This demonstration is intended for use with a Chef server. Upload the cookbooks managed with Berkshelf and the roles.
 
     berks upload --no-freeze --halt-on-frozen -b ./Berksfile
-    knife role from file base.rb webapp.rb
+    knife role from file base.rb database.rb webapp.rb
 
 vCloud Application Director
 ===========================
