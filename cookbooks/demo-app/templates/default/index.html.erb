@@ -14,5 +14,9 @@
 <br>
 <h2>Deployed from vCloud Application Director at <%= Time.now %></h2>
 <h2><%= node.cloud.public_hostname %> on <%= node.cloud.public_ipv4 %></h2>
+<br>
+  <% @mysql.each do |db| -%>
+<h2>MySQL connected on <%= db.ipaddress %>:<%= db['mysql']['port'] %></h2>
+  <% end -%>
 </body>
 </html>

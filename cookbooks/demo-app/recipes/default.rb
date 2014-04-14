@@ -31,10 +31,15 @@ end
   end
 end
 
+db = search(:node, 'run_list:recipe\[mysql\:\:server\]') || []
+
 #write out the webpage
 template '/var/www/demo-app/index.html' do
   source 'index.html.erb'
   mode '0644'
+  variables(
+    :mysql => db.uniq
+    )
 end
 
 web_app 'demo-app' do
