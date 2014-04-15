@@ -1,0 +1,9 @@
+from django.http import HttpResponse
+from django.db import connection
+
+def index(request):
+    cursor = connection.cursor()
+    cursor.execute("SELECT now();")
+    row = cursor.fetchone()
+#    return HttpResponse("vCAD reporting for duty!"+row)
+    return HttpResponse(row)

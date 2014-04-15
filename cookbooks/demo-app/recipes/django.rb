@@ -74,6 +74,12 @@ execute "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/mysql python manage.py starta
   subscribes :run, "template[/var/www/demo_app/demo_app/settings.py]"
 end
 
+# view.py
+template '/var/www/demo_app/appd/views.py' do
+  source 'views.py.erb'
+  mode '0644'
+end
+
 # update config
 execute "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/mysql python manage.py syncdb" do
   cwd "/var/www/demo_app"
