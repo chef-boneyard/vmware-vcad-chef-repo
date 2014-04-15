@@ -58,41 +58,44 @@ template '/var/www/demo_app/demo_app/urls.py' do
   mode '0644'
 end
 
-# kill running django on template update
-execute "pkill python" do
-  ignore_failure true
-  action :nothing
-  subscribes :run, "template[/var/www/demo_app/demo_app/urls.py]"
-  subscribes :run, "template[/var/www/demo_app/demo_app/settings.py]"
-end
-
 # python manage.py startapp appd
-execute "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/mysql python manage.py startapp appd" do
+execute "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/mysql python manage.py startapp appd &>/tmp/startapp.log" do
   cwd "/var/www/demo_app"
-  action :nothing
-  subscribes :run, "template[/var/www/demo_app/demo_app/urls.py]"
-  subscribes :run, "template[/var/www/demo_app/demo_app/settings.py]"
+  not_if {File.exists?("/var/www/demo_app/appd/views.py")}
 end
 
 # view.py
 template '/var/www/demo_app/appd/views.py' do
   source 'views.py.erb'
   mode '0644'
+  variables(
+    :db => database[0]
+    )
+end
+
+directory "/var/www/demo_app/appd/static" do
+  mode 0755
+end
+
+#put the images in the apache directory
+%w{chef.png vmware.jpg}.each do |image|
+  cookbook_file "/var/www/demo_app/appd/static/#{image}" do
+    source image
+    mode '0644'
+  end
+end
+
+# kill running django on template update
+execute "pkill python" do
+  ignore_failure true
 end
 
 # update config
-execute "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/mysql python manage.py syncdb" do
+execute "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/mysql python manage.py syncdb &>/tmp/syncdb.log" do
   cwd "/var/www/demo_app"
-  action :nothing
-  subscribes :run, "template[/var/www/demo_app/demo_app/urls.py]"
-  subscribes :run, "template[/var/www/demo_app/demo_app/settings.py]"
 end
 
 # we'd really want to use runit or daemonize properly, but it's a demo
-execute "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/mysql python manage.py runserver 0.0.0.0:8080 &" do
+execute "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/mysql python manage.py runserver 0.0.0.0:80 &>/tmp/django.log &" do
   cwd "/var/www/demo_app"
-  action :nothing
-  subscribes :run, "execute[LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/mysql python manage.py syncdb]"
 end
-
-include_recipe "demo-app::static"
