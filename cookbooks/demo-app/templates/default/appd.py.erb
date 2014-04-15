@@ -1,0 +1,10 @@
+from django.db import models
+
+class Appd(models.Model):
+	question = models.CharField(max_length=200)
+	pub_date = models.DateTimeField('date_published')
+
+class Choice(models.Model):
+	poll = models.ForeignKey(Appd)
+	choice = models.CharField(max_length=200)
+	votes = models.IntegerField()

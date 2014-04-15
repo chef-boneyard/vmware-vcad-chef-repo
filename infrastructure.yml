@@ -3,6 +3,7 @@ berksfile:
 
 roles:
 - base:
+- database:
 - webapp:
 
 data bags:
