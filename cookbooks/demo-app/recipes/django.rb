@@ -85,17 +85,16 @@ end
   end
 end
 
-# kill running django on template update
+# kill running django, not exactly daemonized
 execute "pkill python" do
-  ignore_failure true
-end
-
-# update config
-execute "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/mysql python manage.py syncdb &>/tmp/syncdb.log" do
-  cwd "/var/www/demo_app"
+  action :nothing
+  only_if "pgrep python"
+  subscribes :run, "template[/var/www/demo_app/demo_app/urls.py]", :immediately
+  subscribes :run, "template[/var/www/demo_app/demo_app/settings.py]", :immediately
+  subscribes :run, "template[/var/www/demo_app/appd/views.py]", :immediately
 end
 
 # we'd really want to use runit or daemonize properly, but it's a demo
-execute "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/mysql python manage.py runserver 0.0.0.0:80 &>/tmp/django.log &" do
+execute "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/mysql python manage.py runserver 0.0.0.0:80 &>>/tmp/django.log &" do
   cwd "/var/www/demo_app"
 end
