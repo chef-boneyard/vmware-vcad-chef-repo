@@ -44,5 +44,5 @@ backend servers-http
   option forwardfor
 
   <% @pool_members.each do |member| -%>
-  server <%= member['hostname'] %> <%= member['cloud']['public_ipv4'] %>:<%= node['haproxy']['member_port'] %> check
+  server <%= member['hostname'] %> <%= member['network']['interfaces']['eth1']['addresses'].keys.find { |e| /\./ =~ e } %>:<%= node['haproxy']['member_port'] %> check
   <% end -%>
